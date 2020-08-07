@@ -6,13 +6,11 @@ import 'package:boring_flutter_app/data/repository/article_repository.dart';
 import 'package:meta/meta.dart';
 
 class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
-
   ArticleRepository repository;
 
   ArticleBloc({@required this.repository});
 
   @override
-  // TODO: implement initialState
   ArticleState get initialState => ArticleInitialState();
 
   @override
@@ -27,10 +25,8 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
       }
     }
 
-    if(event is FetchOtherArticlesEvent){
+    if (event is FetchOtherArticlesEvent) {
       print("123");
     }
-    
   }
-
 }

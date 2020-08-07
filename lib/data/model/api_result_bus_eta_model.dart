@@ -1,17 +1,21 @@
-class ApiResultBusRoutesModel {
+class BusETA {
   String type;
   String version;
   String generatedTimestamp;
-  BusInfo data;
+  List<Bus> data;
 
-  ApiResultBusRoutesModel(
-      {this.type, this.version, this.generatedTimestamp, this.data});
+  BusETA({this.type, this.version, this.generatedTimestamp, this.data});
 
-  ApiResultBusRoutesModel.fromJson(Map<String, dynamic> json) {
+  BusETA.fromJson(Map<String, dynamic> json) {
     type = json['type'];
     version = json['version'];
     generatedTimestamp = json['generated_timestamp '];
-    data = json['data'] != null ? new BusInfo.fromJson(json['data']) : null;
+    if (json['data'] != null) {
+      data = new List<Bus>();
+      json['data'].forEach((v) {
+        data.add(new Bus.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -20,44 +24,59 @@ class ApiResultBusRoutesModel {
     data['version'] = this.version;
     data['generated_timestamp '] = this.generatedTimestamp;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data.map((v) => v.toJson()).toList();
     }
-    data.keys.toList()..sort();
+
     return data;
   }
 }
 
-class BusInfo {
+class Bus {
   String co;
   String route;
-  String origTc;
-  String origEn;
+  String dir;
+  int seq;
+  String stop;
   String destTc;
   String destEn;
-  String origSc;
+  String eta;
+  String rmkTc;
+  int etaSeq;
   String destSc;
+  String rmkEn;
+  String rmkSc;
   String dataTimestamp;
 
-  BusInfo(
+  Bus(
       {this.co,
       this.route,
-      this.origTc,
-      this.origEn,
+      this.dir,
+      this.seq,
+      this.stop,
       this.destTc,
       this.destEn,
-      this.origSc,
+      this.eta,
+      this.rmkTc,
+      this.etaSeq,
       this.destSc,
+      this.rmkEn,
+      this.rmkSc,
       this.dataTimestamp});
 
-  BusInfo.fromJson(Map<String, dynamic> json) {
+  Bus.fromJson(Map<String, dynamic> json) {
     co = json['co'];
     route = json['route'];
-    origTc = json['orig_tc'];
-    origEn = json['orig_en'];
+    dir = json['dir'];
+    seq = json['seq'];
+    stop = json['stop'];
     destTc = json['dest_tc'];
     destEn = json['dest_en'];
-    origSc = json['orig_sc'];
+    eta = json['eta'];
+    rmkTc = json['rmk_tc'];
+    etaSeq = json['eta_seq'];
     destSc = json['dest_sc'];
+    rmkEn = json['rmk_en'];
+    rmkSc = json['rmk_sc'];
     dataTimestamp = json['data_timestamp'];
   }
 
@@ -65,12 +84,17 @@ class BusInfo {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['co'] = this.co;
     data['route'] = this.route;
-    data['orig_tc'] = this.origTc;
-    data['orig_en'] = this.origEn;
+    data['dir'] = this.dir;
+    data['seq'] = this.seq;
+    data['stop'] = this.stop;
     data['dest_tc'] = this.destTc;
     data['dest_en'] = this.destEn;
-    data['orig_sc'] = this.origSc;
+    data['eta'] = this.eta;
+    data['rmk_tc'] = this.rmkTc;
+    data['eta_seq'] = this.etaSeq;
     data['dest_sc'] = this.destSc;
+    data['rmk_en'] = this.rmkEn;
+    data['rmk_sc'] = this.rmkSc;
     data['data_timestamp'] = this.dataTimestamp;
     return data;
   }

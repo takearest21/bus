@@ -1,6 +1,7 @@
 import 'package:boring_flutter_app/data/model/api_result_bus_routes_model.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:boring_flutter_app/data/model/api_result_bus_eta_model.dart';
 
 abstract class BusState extends Equatable {}
 
@@ -17,7 +18,6 @@ class BusLoadingState extends BusState {
 }
 
 class BusLoadedState extends BusState {
-
   List<Bus> buss;
 
   BusLoadedState({@required this.buss});
@@ -28,7 +28,6 @@ class BusLoadedState extends BusState {
 }
 
 class BusErrorState extends BusState {
-
   String message;
 
   BusErrorState({@required this.message});
@@ -37,4 +36,3 @@ class BusErrorState extends BusState {
   // TODO: implement props
   List<Object> get props => [message];
 }
-
