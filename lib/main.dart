@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cricket',
       home: BlocProvider(
-        builder: (context) => BusBloc(repository: BusRepositoryImpl()),
+        create: (context) => BusBloc(repository: BusRepositoryImpl()),
         child: BusHomePage(),
       ),
       //theme: ThemeData(textTheme: ThemeIos.themeAndroid),

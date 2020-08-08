@@ -2,7 +2,7 @@ class ApiResultBusRoutesModel {
   String type;
   String version;
   String generatedTimestamp;
-  BusInfo data;
+  List<BusInfo> data;
 
   ApiResultBusRoutesModel(
       {this.type, this.version, this.generatedTimestamp, this.data});
@@ -11,7 +11,12 @@ class ApiResultBusRoutesModel {
     type = json['type'];
     version = json['version'];
     generatedTimestamp = json['generated_timestamp '];
-    data = json['data'] != null ? new BusInfo.fromJson(json['data']) : null;
+     if (json['data'] != null) {
+      data = new List<BusInfo>();
+      json['data'].forEach((v) {
+        data.add(new BusInfo.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -20,7 +25,7 @@ class ApiResultBusRoutesModel {
     data['version'] = this.version;
     data['generated_timestamp '] = this.generatedTimestamp;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+        data['data'] = this.data.map((v) => v.toJson()).toList();
     }
     data.keys.toList()..sort();
     return data;

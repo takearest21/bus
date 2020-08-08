@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class BusRepository {
+
+  Future<List<BusInfo>> getBusRoute(String stopId);
+
   //This API takes a 6-digit bus stop ID and returns the respective bus stop information
+  
   Future<List<Bus>> getBusStop(String stopId);
 
   /*  This API takes a Citybus/New World First Bus company ID 
@@ -22,7 +26,7 @@ abstract class BusRepository {
   */
   Future<List<Bus>> getBusETA(String companyId, String stopId, String route);
 
-  Future<List<Bus>> getBusRoute(String stopId);
+
 }
 
 class BusRepositoryImpl implements BusRepository {
@@ -74,14 +78,14 @@ class BusRepositoryImpl implements BusRepository {
   }
 
   @override
-  Future<List<Bus>> getBusRoute(
+  Future<List<BusInfo>> getBusRoute(
     String company_id, // NWFB    CTB
   ) async {
     var response =
-        await http.get(AppStrings.busUrl + "transport/citybus-nwfb/route/NWFB");
+        await http.get(AppStrings.busUrl + "citybus-nwfb/route/CTB/107");
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      var result = BusETA.fromJson(data);
+      var result = ApiResultBusRoutesModel.fromJson(data);
       return result.data;
     } else {
       throw Exception();

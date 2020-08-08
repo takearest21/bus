@@ -1,3 +1,6 @@
+import 'package:boring_flutter_app/ui/pages/bus_details_map_page.dart';
+import 'package:boring_flutter_app/ui/pages/bus_nearby_page.dart';
+import 'package:boring_flutter_app/ui/pages/bus_routes_page.dart';
 import 'package:flutter/material.dart';
 import '../../data/model/api_result_bus_routes_model.dart';
 import '../../bloc/bus/bus_bloc.dart';
@@ -15,12 +18,16 @@ class BusHomePage extends StatefulWidget {
 
 class _BusHomePageState extends State<BusHomePage> {
   BusBloc busBloc;
-
+  int _currentIndex = 0;
+  final List<Widget> _children = [
+    BusNearByPage(),
+    BusRoutePage()
+    
+  ];
   @override
   void initState() {
     super.initState();
-    busBloc = BlocProvider.of<BusBloc>(context);
-    busBloc.add(FetchBussEvent());
+
   }
 
   @override
@@ -35,93 +42,36 @@ class _BusHomePageState extends State<BusHomePage> {
                 IconButton(
                   icon: Icon(Icons.refresh),
                   onPressed: () {
-                    busBloc.add(FetchBussEvent());
+                    busBloc = BlocProvider.of<BusBloc>(context);
+                    busBloc.add(FetchAllBussByCompanyEvent());
                   },
                 )
               ],
             ),
-            body: Container(
-              child: BlocListener<BusBloc, BusState>(
-                listener: (context, state) {
-                  if (state is BusErrorState) {
-                    SnackBar(content: Text(state.message));
-                  }
-                },
-                child: BlocBuilder<BusBloc, BusState>(
-                  builder: (context, state) {
-                    print(state);
-                    if (state is BusInitialState) {
-                      return buildLoading();
-                    } else if (state is BusLoadingState) {
-                      return buildLoading();
-                    } else if (state is BusLoadedState) {
-                      return buildBusList(state.buss);
-                    } else if (state is BusErrorState) {
-                      return buildErrorUi(state.message);
-                    } else {
-                      return Container(
-                        child: Text(state.toString()),
-                      );
-                    }
-                  },
+            body: _children[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: 0, // this will be set when a new tab is tapped
+              onTap: onTabTapped,
+              items: [
+                BottomNavigationBarItem(
+                  icon: new Icon(Icons.pin_drop),
+                  title: new Text('NearBy'),
                 ),
-              ),
+                BottomNavigationBarItem(
+                  icon: new Icon(Icons.stop),
+                  title: new Text('Bus Route Info'),
+                ),
+              ],
             ),
           ),
         );
       },
     ));
   }
+  void onTabTapped(int index) {
+   setState(() {
+     _currentIndex = index;
+   });
+ }
 }
 
-Widget buildLoading() {
-  return Center(
-    child: CircularProgressIndicator(),
-  );
-}
-
-Widget buildBusList(List<Bus> buss) {
-  return Padding(
-      padding: EdgeInsets.all(15),
-      child: Column(
-        children: [
-          Container(
-            child: Text("123"),
-            height: 50,
-          ),
-          Expanded(
-            child: ListView.builder(
-                itemCount: buss.length,
-                itemBuilder: (ctx, pos) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      child: ListTile(
-                        title: Text(
-                          buss[pos].destTc,
-                        ),
-                        subtitle: Text(DateTime.parse(buss[pos].eta)
-                                .hour
-                                .toString() +
-                            ":" +
-                            DateTime.parse(buss[pos].eta).minute.toString()),
-                      ),
-                    ),
-                  );
-                }),
-          )
-        ],
-      ));
-}
-
-Widget buildErrorUi(String message) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        message,
-        style: TextStyle(color: Colors.red),
-      ),
-    ),
-  );
-}

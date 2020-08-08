@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
   ArticleRepository repository;
 
-  ArticleBloc({@required this.repository});
+  ArticleBloc({@required this.repository}) : super(null);
 
   @override
   ArticleState get initialState => ArticleInitialState();
