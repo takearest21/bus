@@ -12,3 +12,8 @@ class FetchAllBussByCompanyEvent extends BusEvent {
   @override
   List<Object> get props => null;
 }
+
+class SearchBus extends BusEvent{
+  @override
+  List<Object> get props => null;
+}

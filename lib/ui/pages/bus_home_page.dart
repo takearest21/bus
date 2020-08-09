@@ -1,15 +1,10 @@
-import 'package:boring_flutter_app/ui/pages/bus_details_map_page.dart';
 import 'package:boring_flutter_app/ui/pages/bus_nearby_page.dart';
 import 'package:boring_flutter_app/ui/pages/bus_routes_page.dart';
 import 'package:flutter/material.dart';
-import '../../data/model/api_result_bus_routes_model.dart';
 import '../../bloc/bus/bus_bloc.dart';
-import '../../bloc/bus/bus_state.dart';
 import 'package:boring_flutter_app/bloc/bus/bus_event.dart';
 import '../../bloc/bus/bus_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:boring_flutter_app/data/model/api_result_bus_eta_model.dart';
-import 'dart:collection';
 
 class BusHomePage extends StatefulWidget {
   @override
@@ -19,16 +14,39 @@ class BusHomePage extends StatefulWidget {
 class _BusHomePageState extends State<BusHomePage> {
   BusBloc busBloc;
   int _currentIndex = 0;
-  final List<Widget> _children = [
-    BusNearByPage(),
-    BusRoutePage()
-    
-  ];
+  final List<Widget> _children = [BusNearByPage(), BusRoutePage()];
   @override
   void initState() {
     super.initState();
-
   }
+    String dropdownValue = 'All';
+
+    Widget selectCmpany() {
+      return DropdownButton<String>(
+        value: dropdownValue,
+        icon: Icon(Icons.arrow_downward),
+        iconSize: 24,
+        elevation: 16,
+        style: TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (String newValue) {
+          setState(() {
+            dropdownValue = newValue;
+          });
+        },
+        items: <String>['All','City Bus', 'KWB']
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      );
+    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +68,7 @@ class _BusHomePageState extends State<BusHomePage> {
             ),
             body: _children[_currentIndex],
             bottomNavigationBar: BottomNavigationBar(
-              currentIndex: 0, // this will be set when a new tab is tapped
+              currentIndex: _currentIndex==0?0:1, // this will be set when a new tab is tapped
               onTap: onTabTapped,
               items: [
                 BottomNavigationBarItem(
@@ -63,15 +81,33 @@ class _BusHomePageState extends State<BusHomePage> {
                 ),
               ],
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                        title: selectCmpany(),
+                        content: Row(
+                          children: [
+                            Text('輸入巴士嘅Number'),
+                            FlatButton(onPressed: null, child: Text("Search"))
+                          ],
+                        )));
+              },
+              child: Icon(Icons.search),
+              backgroundColor: Colors.orange,
+            ),
           ),
         );
       },
     ));
+
+
   }
   void onTabTapped(int index) {
-   setState(() {
-     _currentIndex = index;
-   });
- }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 }
 

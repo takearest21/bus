@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../utils/permission_control.dart';
+import 'package:permission/permission.dart';
 
 class BusDetailsMapPage extends StatefulWidget {
   @override
@@ -19,19 +21,21 @@ class _BusDetailsMapPageState extends State<BusDetailsMapPage> {
   static LatLng _initialPosition;
   final Set<Marker> _markers = {};
   static  LatLng _lastMapPosition = _initialPosition;
-  
+
   @override
   void initState() {
     super.initState();
     _getUserLocation();
   }
   void _getUserLocation() async {
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(position.latitude, position.longitude);
-    print("333");
+    var position1 = await Geolocator().getCurrentPosition(
+      locationPermissionLevel: GeolocationPermission.locationWhenInUse,
+      desiredAccuracy: LocationAccuracy.low);
+    print(position1.latitude);
+    print(position1.longitude);
     setState(() {
-      _initialPosition = LatLng(position.latitude, position.longitude);
-      print('${placemark[0].name}');
+      _initialPosition = LatLng(position1.latitude, position1.longitude);
+      //print('${placemark[0].name}');
     });
   }
 
@@ -73,3 +77,4 @@ class _BusDetailsMapPageState extends State<BusDetailsMapPage> {
     );
   }
 }
+

@@ -1,13 +1,15 @@
 import 'package:boring_flutter_app/ui/pages/bus_details_map_page.dart';
 import 'package:flutter/material.dart';
-import '../../data/model/api_result_bus_routes_model.dart';
 import '../../bloc/bus/bus_bloc.dart';
 import '../../bloc/bus/bus_state.dart';
 import 'package:boring_flutter_app/bloc/bus/bus_event.dart';
 import '../../bloc/bus/bus_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:boring_flutter_app/data/model/api_result_bus_eta_model.dart';
-import 'dart:collection';
+import '../widgets/normal_widget.dart';
+
+import 'package:boring_flutter_app/bloc/bus/bus_bloc.dart';
+import '../../data/repository/bus_repository.dart';
 
 class BusNearByPage extends StatefulWidget {
   @override
@@ -19,7 +21,9 @@ class _BusNearByPageState extends State<BusNearByPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+       BlocProvider(
+        create: (context) => BusBloc(repository: BusRepositoryImpl()),
+      );
     super.initState();
     busBloc = BlocProvider.of<BusBloc>(context);
     busBloc.add(FetchAllBussByCompanyEvent());
@@ -27,33 +31,36 @@ class _BusNearByPageState extends State<BusNearByPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BlocListener<BusBloc, BusState>(
-        listener: (context, state) {
-          if (state is BusErrorState) {
-            SnackBar(content: Text(state.message));
-          }
-        },
-        child: BlocBuilder<BusBloc, BusState>(
-          builder: (context, state) {
-            print(state);
-            if (state is BusInitialState) {
-              return buildLoading();
-            } else if (state is BusLoadingState) {
-              return buildLoading();
-            } else if (state is BusLoadedState) {
-              return buildBusList(state.buss);
-            } else if (state is BusErrorState) {
-              return buildErrorUi(state.message);
-            } else {
-              return Container(
-                child: Text(state.toString()),
-              );
-            }
-          },
-        ),
-      ),
-    );
+    return 
+      Container(
+          child: BlocListener<BusBloc, BusState>(
+            listener: (context, state) {
+              if (state is BusErrorState) {
+                SnackBar(content: Text(state.message));
+              }
+            },
+            child: BlocBuilder<BusBloc, BusState>(
+              builder: (context, state) {
+                print(state);
+                if (state is BusInitialState) {
+                  return Widgets.buildLoading();
+                } else if (state is BusLoadingState) {
+                  return Widgets.buildLoading();
+                } else if (state is BusLoadedState) {
+                  return buildBusList(state.buss);
+                } else if (state is BusErrorState) {
+                  return Widgets.buildErrorUi(state.message);
+                } else {
+                  return Container(
+                    child: Text(state.toString()),
+                  );
+                }
+              },
+            ),
+          ),
+        );
+
+
   }
 }
 
@@ -82,7 +89,8 @@ Widget buildBusList(List<Bus> buss) {
                         SizedBox(height: 50),
                         Icon(Icons.close)
                       ],
-                    ),alignment: Alignment.topCenter,
+                    ),
+                    alignment: Alignment.topCenter,
                   )
                 : ListView.builder(
                     itemCount: buss.length,
@@ -114,16 +122,4 @@ Widget buildBusList(List<Bus> buss) {
           )
         ],
       ));
-}
-
-Widget buildErrorUi(String message) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        message,
-        style: TextStyle(color: Colors.red),
-      ),
-    ),
-  );
 }

@@ -1,4 +1,5 @@
 import 'package:boring_flutter_app/bloc/bus/bus_bloc.dart';
+import 'package:boring_flutter_app/bloc/bus/bus_info_bloc.dart';
 import 'package:boring_flutter_app/ui/pages/bus_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cricket',
+      darkTheme: ThemeData.dark(),
       home: BlocProvider(
-        create: (context) => BusBloc(repository: BusRepositoryImpl()),
+        create: (context) => BusInfoBloc(repository: BusRepositoryImpl()),
         child: BusHomePage(),
       ),
       //theme: ThemeData(textTheme: ThemeIos.themeAndroid),

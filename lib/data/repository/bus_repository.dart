@@ -3,8 +3,6 @@ import 'package:boring_flutter_app/res/strings/strings.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:boring_flutter_app/data/model/api_result_bus_eta_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 abstract class BusRepository {
 
@@ -82,11 +80,11 @@ class BusRepositoryImpl implements BusRepository {
     String company_id, // NWFB    CTB
   ) async {
     var response =
-        await http.get(AppStrings.busUrl + "citybus-nwfb/route/CTB/107");
+        await http.get(AppStrings.busUrl + "citybus-nwfb/route/CTB");
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       var result = ApiResultBusRoutesModel.fromJson(data);
-      return result.data;
+      return  result.data;
     } else {
       throw Exception();
     }
