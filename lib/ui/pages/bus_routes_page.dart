@@ -15,6 +15,9 @@ class BusRoutePage extends StatefulWidget {
 class _BusRoutePageState extends State<BusRoutePage> {
   BusInfoBloc busInfoBloc;
 
+  String _dropdownValue = 'All';
+
+
   @override
   void initState() {
     super.initState();
@@ -23,8 +26,8 @@ class _BusRoutePageState extends State<BusRoutePage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BlocListener<BusInfoBloc, BusInfoState>(
+    return Scaffold(
+      body: BlocListener<BusInfoBloc, BusInfoState>(
         listener: (context, state) {
           if (state is BusInfoErrorState) {
             SnackBar(content: Text(state.message));
@@ -49,8 +52,85 @@ class _BusRoutePageState extends State<BusRoutePage> {
           },
         ),
       ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _showDialog();
+          },
+          child: Icon(Icons.search),
+          backgroundColor: Colors.orange,
+        ),
     );
   }
+  Widget selectCmpany() {
+    return DropdownButton<String>(
+      value: _dropdownValue,
+      icon: Icon(Icons.arrow_downward),
+      iconSize: 24,
+      elevation: 16,
+      style: TextStyle(color: Colors.deepPurple),
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      items: <String>['All', 'City Bus', 'KWB']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (String newValue) {
+        _dropdownValue = newValue;
+        print(newValue);
+        setState(() {
+          print("123");
+          _dropdownValue = newValue;
+        });
+      }
+    );
+  }
+
+  _showDialog() async {
+    await showDialog<String>(
+      context: context,
+      child: new AlertDialog(
+        contentPadding: const EdgeInsets.all(16.0),
+        content: new Row(
+          children: <Widget>[
+            new Expanded(
+                child: SizedBox(
+                    height: 150,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: selectCmpany(),
+                        ),
+                        new TextField(
+                          autofocus: true,
+                          decoration: new InputDecoration(
+                              labelText: '巴士BUMBER', hintText: 'eg. 102'),
+                        ),
+                      ],
+                    )))
+          ],
+        ),
+        actions: <Widget>[
+          new FlatButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+              }),
+          new FlatButton(
+              child: const Text('OPEN'),
+              onPressed: () {
+                busInfoBloc.add(FetchAllBussByCompanyEvent());
+                Navigator.of(context, rootNavigator: true).pop();
+              })
+        ],
+      ),
+    );
+  }
+
 }
 
 Widget buildBusList(List<BusInfo> bussInfo) {
@@ -60,7 +140,6 @@ Widget buildBusList(List<BusInfo> bussInfo) {
       child: Column(
         children: [
           Container(
-            child: Text("Hong Kong All bus "),
             height: 50,
           ),
           Expanded(

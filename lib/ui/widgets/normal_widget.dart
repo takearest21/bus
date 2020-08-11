@@ -12,7 +12,7 @@ class Widgets {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          message,
+          "ERROR 404 NOT FOUND THE BUS",
           style: TextStyle(color: Colors.red),
         ),
       ),

@@ -6,7 +6,7 @@ import 'package:boring_flutter_app/data/model/api_result_bus_eta_model.dart';
 import 'package:meta/meta.dart';
 
 class BusBloc extends Bloc<BusEvent, BusState> {
-  BusRepository repository;
+  final BusRepository repository;
 
   BusBloc({@required this.repository}) : super(null);
 

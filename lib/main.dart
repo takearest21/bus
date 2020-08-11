@@ -14,10 +14,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cricket',
       darkTheme: ThemeData.dark(),
-      home: BlocProvider(
+      home: BusHomePage(),
+      /*home: BlocProvider(
         create: (context) => BusInfoBloc(repository: BusRepositoryImpl()),
         child: BusHomePage(),
-      ),
+      ),*/
       //theme: ThemeData(textTheme: ThemeIos.themeAndroid),
     );
   }

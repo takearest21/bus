@@ -19,11 +19,10 @@ class BusNearByPage extends StatefulWidget {
 class _BusNearByPageState extends State<BusNearByPage> {
   BusBloc busBloc;
 
+  String _dropdownValue = 'All';
+
   @override
   void initState() {
-       BlocProvider(
-        create: (context) => BusBloc(repository: BusRepositoryImpl()),
-      );
     super.initState();
     busBloc = BlocProvider.of<BusBloc>(context);
     busBloc.add(FetchAllBussByCompanyEvent());
@@ -31,47 +30,109 @@ class _BusNearByPageState extends State<BusNearByPage> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-      Container(
-          child: BlocListener<BusBloc, BusState>(
-            listener: (context, state) {
-              if (state is BusErrorState) {
-                SnackBar(content: Text(state.message));
+    return Scaffold(
+        body: BlocListener<BusBloc, BusState>(
+          listener: (context, state) {
+            if (state is BusErrorState) {
+              SnackBar(content: Text(state.message));
+            }
+          },
+      
+          child: BlocBuilder<BusBloc, BusState>(
+            builder: (context, state) {
+              print(state);
+              if (state is BusInitialState) {
+                return Widgets.buildLoading();
+              } else if (state is BusLoadingState) {
+                return Widgets.buildLoading();
+              } else if (state is BusLoadedState) {
+                return buildBusList(state.buss);
+              } else if (state is BusErrorState) {
+                return Widgets.buildErrorUi(state.message);
+              } else {
+                return Widgets.buildErrorUi("");
               }
             },
-            child: BlocBuilder<BusBloc, BusState>(
-              builder: (context, state) {
-                print(state);
-                if (state is BusInitialState) {
-                  return Widgets.buildLoading();
-                } else if (state is BusLoadingState) {
-                  return Widgets.buildLoading();
-                } else if (state is BusLoadedState) {
-                  return buildBusList(state.buss);
-                } else if (state is BusErrorState) {
-                  return Widgets.buildErrorUi(state.message);
-                } else {
-                  return Container(
-                    child: Text(state.toString()),
-                  );
-                }
-              },
-            ),
           ),
-        );
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _showDialog();
+          },
+          child: Icon(Icons.search),
+          backgroundColor: Colors.orange,
+        ),
+    );
+  }
 
+  Widget selectCmpany() {
+    return DropdownButton<String>(
+        value: _dropdownValue,
+        icon: Icon(Icons.arrow_downward),
+        iconSize: 24,
+        elevation: 16,
+        style: TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        items: <String>['All', 'City Bus', 'KWB']
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (String newValue) {
+          _dropdownValue = newValue;
+          print(newValue);
+          setState(() {
+            print("123");
+            _dropdownValue = newValue;
+          });
+        });
+  }
 
+  _showDialog() async {
+    await showDialog<String>(
+      context: context,
+      child: new AlertDialog(
+        contentPadding: const EdgeInsets.all(16.0),
+        content: new Row(
+          children: <Widget>[
+            new Expanded(
+                child: SizedBox(
+                    height: 150,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: selectCmpany(),
+                        ),
+                        new TextField(
+                          autofocus: true,
+                          decoration: new InputDecoration(
+                              labelText: '巴士BUMBER', hintText: 'eg. 102'),
+                        ),
+                      ],
+                    )))
+          ],
+        ),
+        actions: <Widget>[
+          new FlatButton(child: const Text('CANCEL'), onPressed: () {}),
+          new FlatButton(
+              child: const Text('OPEN'),
+              onPressed: () {
+                busBloc.add(FetchAllBussByCompanyEvent());
+                Navigator.of(context, rootNavigator: true).pop();
+              })
+        ],
+      ),
+    );
   }
 }
 
-Widget buildLoading() {
-  return Center(
-    child: CircularProgressIndicator(),
-  );
-}
-
 Widget buildBusList(List<Bus> buss) {
-  print(buss.length);
   return Padding(
       padding: EdgeInsets.all(15),
       child: Column(
