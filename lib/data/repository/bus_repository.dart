@@ -35,7 +35,7 @@ class BusRepositoryImpl implements BusRepository {
     String route,
   ) async {
     var response =
-        await http.get(AppStrings.busUrl + "citybus-nwfb/eta/NWFB/001357/110");
+        await http.get(AppStrings.busUrl + "citybus-nwfb/eta/NWFB/001357/$route");
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       var result = BusETA.fromJson(data);

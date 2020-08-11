@@ -25,7 +25,7 @@ class _BusNearByPageState extends State<BusNearByPage> {
   void initState() {
     super.initState();
     busBloc = BlocProvider.of<BusBloc>(context);
-    busBloc.add(FetchAllBussByCompanyEvent());
+    busBloc.add(FetchAllBussByCompanyEvent("","",""));
   }
 
   @override
@@ -123,7 +123,7 @@ class _BusNearByPageState extends State<BusNearByPage> {
           new FlatButton(
               child: const Text('OPEN'),
               onPressed: () {
-                busBloc.add(FetchAllBussByCompanyEvent());
+                busBloc.add(FetchAllBussByCompanyEvent("","","102"));
                 Navigator.of(context, rootNavigator: true).pop();
               })
         ],

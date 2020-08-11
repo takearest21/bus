@@ -23,6 +23,14 @@ class BusBloc extends Bloc<BusEvent, BusState> {
       } catch (e) {
         yield BusErrorState(message: e.toString());
       }
+    }else if (event is SearchBus){
+      yield BusLoadingState();
+      try {
+        List<Bus> buss = await repository.getBusETA('NWFB', '001357', event.busNumber);
+        yield BusLoadedState(buss: buss);
+      } catch (e) {
+        yield BusErrorState(message: e.toString());
+      }
     }
     
   }
